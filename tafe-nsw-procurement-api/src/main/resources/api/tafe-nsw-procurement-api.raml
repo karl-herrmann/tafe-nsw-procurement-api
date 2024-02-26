@@ -1,0 +1,107 @@
+#%RAML 1.0
+title: TAFE NSW HR System API
+version: v1
+mediaType: application/json
+
+types:
+  Staff:
+    properties:
+      id: string
+      firstName: string
+      lastName: string
+      email: string
+      role: string
+      isActive: boolean
+
+/unsecured:
+  /staff:
+    get:
+      description: Retrieve a list of all staff members
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                [
+                  {
+                    "id": "1",
+                    "firstName": "Karl",
+                    "lastName": "Herrmann",
+                    "email": "karl.herrmann@tafe.nsw.gov.au",
+                    "role": "Manager",
+                    "isActive": true
+                  },
+                  {
+                    "id": "2",
+                    "firstName": "Ruth",
+                    "lastName": "Green",
+                    "email": "ruth.green@tafe.nsw.gov.au",
+                    "role": "Developer",
+                    "isActive": false
+                  }
+                ]
+    post:
+      description: Create a new staff member
+      body:
+        application/json:
+          type: Staff
+      responses:
+        201:
+          description: Staff member created successfully
+        400:
+          description: Bad request, invalid input
+
+/secured:
+  /staff/{id}:
+    put:
+      description: Update a staff member
+      body:
+        application/json:
+          type: Staff
+      responses:
+        200:
+          description: Staff member updated successfully
+        400:
+          description: Bad request, invalid input
+        404:
+          description: Staff member not found
+    delete:
+      description: Offboard a staff member
+      responses:
+        204:
+          description: Staff member offboarded successfully
+        404:
+          description: Staff member not found
+
+/listener:
+  /staff/notify:
+    post:
+      description: Notify API of changed record(s)
+      body:
+        application/json:
+          example: |
+            {
+              "id": "1",
+              "changes": {
+                "role": "Manager",
+                "isActive": true
+              }
+            }
+      responses:
+        200:
+          description: Notification processed successfully
+        400:
+          description: Bad request, invalid input
+
+/special-privilege:
+  /staff/create:
+    post:
+      description: Create a new staff member with special privilege
+      body:
+        application/json:
+          type: Staff
+      responses:
+        201:
+          description: Staff member created with special privilege
+        400:
+          description: Bad request, invalid input
